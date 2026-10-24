@@ -59,3 +59,30 @@ The system operates using **3 specialized AI agents**:
 ```bash
 git clone [https://github.com/your-username/miss-mat-karo-agent.git](https://github.com/your-username/miss-mat-karo-agent.git)
 cd miss-mat-karo-agent
+## 💻 Code Explanation (Core Pipeline)
+
+Here is a look at how the agent pipeline processes incoming forwarded notices using Python and agent protocols:
+
+```python
+@notice_proto.on_message(NoticeMessage)
+async def handle_incoming_notice(ctx: Context, sender: str, msg: NoticeMessage):
+    ctx.logger.info("New notice received, processing through pipeline...")
+
+    # 1. Collector Agent: Extract What, Last Date, and Link
+    extracted_data = parse_notice_text(msg.raw_content)
+    
+    # 2. Filter Agent: Check if notice belongs to student's profile
+    student_profile = {"year": "3rd", "branch": "CSE", "section": "B"}
+    
+    if not matches_profile(extracted_data, student_profile):
+        ctx.logger.info("Notice filtered out: Not relevant to this student.")
+        return
+
+    # 3. Reminder Agent: Save task and schedule alert 2 hours prior
+    schedule_deadline_reminder(
+        task=extracted_data["what"], 
+        deadline=extracted_data["last_date"], 
+        hours_before=2
+    )
+    
+    ctx.logger.info("Notice saved successfully! Reminder scheduled.")
