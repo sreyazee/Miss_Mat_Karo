@@ -1,4 +1,4 @@
-# 🚀 Miss Mat Karo Agent
+# 🚀 Miss Mat Karo AI
 
 > **Never miss an important college deadline again.**
 
